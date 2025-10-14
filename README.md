@@ -1,3 +1,6 @@
+# shicijianshang
+诗词鉴赏
+>>>>>>> b40b9f85a59d0ab1f452b969928cbe757ae585de
 # 诗词鉴赏网站
 
 一个简洁美观的诗词赏析单页网站，支持搜索、筛选与暗黑模式。
@@ -68,3 +71,7 @@ poem/
 ## 许可证
 
 MIT License
+=======
+# shicijianshang
+诗词鉴赏
+>>>>>>> b40b9f85a59d0ab1f452b969928cbe757ae585de
