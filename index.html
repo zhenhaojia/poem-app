@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>诗词赏析</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <meta name="description" content="一个简洁美观的诗词赏析网站，支持搜索、筛选与暗黑模式。" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="logo">詩</span>
+      <div class="titles">
+        <h1>诗词赏析</h1>
+        <p class="subtitle">读诗以明心，赏析以见境</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="themeToggle" class="icon-btn" aria-label="切换主题">🌗</button>
+      <a class="gh-link" href="#" target="_blank" rel="noopener">关于</a>
+    </div>
+  </header>
+
+  <main id="app">
+    <section class="controls">
+      <div class="search-group">
+        <input id="searchInput" type="search" placeholder="搜索：标题/作者/内容/标签" aria-label="搜索诗词" />
+        <button id="clearSearch" class="text-btn">清空</button>
+      </div>
+      <div class="filters">
+        <label>
+          朝代
+          <select id="dynastyFilter">
+            <option value="">全部</option>
+          </select>
+        </label>
+        <label>
+          题材
+          <select id="themeFilter">
+            <option value="">全部</option>
+          </select>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="withNotes" />
+          仅看有注释
+        </label>
+      </div>
+    </section>
+
+    <section id="listView" class="list-view">
+      <ul id="poemList" class="poem-list" aria-live="polite"></ul>
+      <div id="emptyState" class="empty-state" hidden>
+        <p>未找到匹配的诗词。</p>
+        <p class="hint">试试简化关键词或清空筛选条件。</p>
+      </div>
+    </section>
+
+    <section id="detailView" class="detail-view" hidden>
+      <button id="backBtn" class="back-btn">← 返回列表</button>
+      <article id="poemDetail"></article>
+      <nav class="pager" id="pager" hidden>
+        <button id="prevBtn" class="text-btn">上一首</button>
+        <button id="nextBtn" class="text-btn">下一首</button>
+      </nav>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small>© 2025 诗词赏析 · 本站示例数据仅用于演示</small>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>
