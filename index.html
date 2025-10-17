@@ -3,71 +3,148 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>诗词赏析</title>
+  <title>诗词雅集 - 古典诗词赏析平台</title>
   <link rel="stylesheet" href="assets/styles.css" />
-  <meta name="description" content="一个简洁美观的诗词赏析网站，支持搜索、筛选与暗黑模式。" />
+  <meta name="description" content="专业的古典诗词赏析平台，提供诗人介绍、诗词创作背景、深度赏析和AI智能解读。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header class="app-header">
     <div class="brand">
       <span class="logo">詩</span>
       <div class="titles">
-        <h1>诗词赏析</h1>
-        <p class="subtitle">读诗以明心，赏析以见境</p>
+        <h1>诗词雅集</h1>
+        <p class="subtitle">品味千年诗韵，传承中华文化</p>
       </div>
     </div>
     <div class="header-actions">
       <button id="themeToggle" class="icon-btn" aria-label="切换主题">🌗</button>
-      <a class="gh-link" href="#" target="_blank" rel="noopener">关于</a>
+      <a class="gh-link" href="#about" id="aboutLink">关于</a>
     </div>
   </header>
 
   <main id="app">
+    <!-- 欢迎横幅 -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <h2>探索千年诗韵</h2>
+        <p>从唐诗宋词到汉乐府，感受中华文化的博大精深</p>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-number">100+</span>
+            <span class="stat-label">经典诗词</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">著名诗人</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">10+</span>
+            <span class="stat-label">历史朝代</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="controls">
       <div class="search-group">
-        <input id="searchInput" type="search" placeholder="搜索：标题/作者/内容/标签" aria-label="搜索诗词" />
+        <input id="searchInput" type="search" placeholder="搜索诗词标题、作者、内容或标签..." aria-label="搜索诗词" />
         <button id="clearSearch" class="text-btn">清空</button>
       </div>
       <div class="filters">
         <label>
           朝代
           <select id="dynastyFilter">
-            <option value="">全部</option>
+            <option value="">全部朝代</option>
           </select>
         </label>
         <label>
           题材
           <select id="themeFilter">
-            <option value="">全部</option>
+            <option value="">全部题材</option>
           </select>
         </label>
         <label class="checkbox">
           <input type="checkbox" id="withNotes" />
-          仅看有注释
+          仅显示有赏析
         </label>
+        <button id="randomPoem" class="text-btn">随机一首</button>
       </div>
     </section>
 
     <section id="listView" class="list-view">
-      <ul id="poemList" class="poem-list" aria-live="polite"></ul>
+      <div class="view-toggle">
+        <button id="gridViewBtn" class="view-btn active">网格视图</button>
+        <button id="listViewBtn" class="view-btn">列表视图</button>
+      </div>
+      <ul id="poemList" class="poem-list grid-view" aria-live="polite"></ul>
       <div id="emptyState" class="empty-state" hidden>
-        <p>未找到匹配的诗词。</p>
-        <p class="hint">试试简化关键词或清空筛选条件。</p>
+        <div class="empty-icon">📖</div>
+        <p>未找到匹配的诗词</p>
+        <p class="hint">尝试调整搜索关键词或筛选条件</p>
       </div>
     </section>
 
     <section id="detailView" class="detail-view" hidden>
-      <button id="backBtn" class="back-btn">← 返回列表</button>
+      <div class="detail-header">
+        <button id="backBtn" class="back-btn">← 返回列表</button>
+        <div class="detail-actions">
+          <button id="shareBtn" class="text-btn">分享</button>
+          <button id="favoriteBtn" class="text-btn">收藏</button>
+        </div>
+      </div>
       <article id="poemDetail"></article>
       <nav class="pager" id="pager" hidden>
-        <button id="prevBtn" class="text-btn">上一首</button>
-        <button id="nextBtn" class="text-btn">下一首</button>
+        <button id="prevBtn" class="text-btn">← 上一首</button>
+        <span class="pager-info">第 <span id="currentIndex">1</span> 首，共 <span id="totalCount">0</span> 首</span>
+        <button id="nextBtn" class="text-btn">下一首 →</button>
       </nav>
     </section>
   </main>
 
+  </main>
+
+  <!-- 关于页面 -->
+  <section id="about" class="about-section" hidden>
+    <div class="about-container">
+      <button id="backFromAbout" class="back-btn">← 返回首页</button>
+      <div class="about-content">
+        <h2>关于诗词雅集</h2>
+        <div class="about-text">
+          <p>诗词雅集是一个致力于传承和推广中华古典诗词文化的在线平台。我们汇集了从先秦到明清的经典诗词作品，为诗词爱好者提供专业的赏析和学习资源。</p>
+          
+          <h3>平台特色</h3>
+          <ul>
+            <li>📚 丰富的诗词库，涵盖各个历史时期</li>
+            <li>🎨 精美的界面设计，还原古典美学</li>
+            <li>🤖 智能AI助手，提供个性化解读</li>
+            <li>📱 响应式设计，支持多设备访问</li>
+            <li>🔍 强大的搜索和筛选功能</li>
+          </ul>
+
+          <h3>数据来源</h3>
+          <p>本站诗词数据来源于权威的古典文学典籍，包括《全唐诗》、《宋词三百首》等经典文献，确保内容的准确性和权威性。</p>
+
+          <h3>技术栈</h3>
+          <p>前端：HTML5 + CSS3 + 原生JavaScript<br>
+             后端：Supabase + Edge Functions<br>
+             部署：Netlify</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <footer class="app-footer">
-    <small>© 2025 诗词赏析 · 本站示例数据仅用于演示</small>
+    <div class="footer-content">
+      <small>© 2025 诗词雅集 · 传承中华文化，品味千年诗韵</small>
+      <div class="footer-links">
+        <a href="#about" class="footer-link">关于我们</a>
+        <a href="#" class="footer-link">使用条款</a>
+        <a href="#" class="footer-link">隐私政策</a>
+      </div>
+    </div>
   </footer>
 
   <!-- AI聊天助手 -->

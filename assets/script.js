@@ -18,26 +18,57 @@
     dynastyFilter: document.getElementById("dynastyFilter"),
     themeFilter: document.getElementById("themeFilter"),
     withNotes: document.getElementById("withNotes"),
+    randomPoem: document.getElementById("randomPoem"),
+    gridViewBtn: document.getElementById("gridViewBtn"),
+    listViewBtn: document.getElementById("listViewBtn"),
     poemList: document.getElementById("poemList"),
     emptyState: document.getElementById("emptyState"),
     listView: document.getElementById("listView"),
     detailView: document.getElementById("detailView"),
     poemDetail: document.getElementById("poemDetail"),
     backBtn: document.getElementById("backBtn"),
+    shareBtn: document.getElementById("shareBtn"),
+    favoriteBtn: document.getElementById("favoriteBtn"),
     themeToggle: document.getElementById("themeToggle"),
     pager: document.getElementById("pager"),
     prevBtn: document.getElementById("prevBtn"),
     nextBtn: document.getElementById("nextBtn"),
+    currentIndex: document.getElementById("currentIndex"),
+    totalCount: document.getElementById("totalCount"),
+    aboutLink: document.getElementById("aboutLink"),
+    aboutSection: document.getElementById("about"),
+    backFromAbout: document.getElementById("backFromAbout"),
   };
 
-  // Theme restore
+  // 初始化设置
   const savedTheme = localStorage.getItem("theme");
+  const savedViewMode = localStorage.getItem("viewMode") || "grid";
   if (savedTheme === "dark") document.documentElement.classList.add("dark");
+  
+  // 设置初始视图模式
+  setViewMode(savedViewMode);
 
+  // 事件监听器
   els.themeToggle.addEventListener("click", () => {
     document.documentElement.classList.toggle("dark");
     const isDark = document.documentElement.classList.contains("dark");
     localStorage.setItem("theme", isDark ? "dark" : "light");
+  });
+
+  els.gridViewBtn.addEventListener("click", () => setViewMode("grid"));
+  els.listViewBtn.addEventListener("click", () => setViewMode("list"));
+  
+  els.randomPoem.addEventListener("click", showRandomPoem);
+  els.shareBtn.addEventListener("click", sharePoem);
+  els.favoriteBtn.addEventListener("click", toggleFavorite);
+  
+  els.aboutLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    showAboutPage();
+  });
+  
+  els.backFromAbout.addEventListener("click", () => {
+    hideAboutPage();
   });
 
   // Load data
@@ -246,6 +277,76 @@
     location.hash = "id=" + encodeURIComponent(p.id);
     showDetail(p);
     state.currentIndex = idx;
+  }
+
+  // 视图模式设置
+  function setViewMode(mode) {
+    localStorage.setItem("viewMode", mode);
+    els.poemList.classList.toggle("list-view", mode === "list");
+    els.poemList.classList.toggle("grid-view", mode === "grid");
+    els.gridViewBtn.classList.toggle("active", mode === "grid");
+    els.listViewBtn.classList.toggle("active", mode === "list");
+    renderList();
+  }
+
+  // 随机诗词功能
+  function showRandomPoem() {
+    if (state.filtered.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * state.filtered.length);
+    showDetailByIndex(randomIndex);
+  }
+
+  // 分享功能
+  function sharePoem() {
+    if (state.currentIndex === null) return;
+    const poem = state.filtered[state.currentIndex];
+    const shareText = `《${poem.title}》 - ${poem.author} (${poem.dynasty})
+
+${poem.content}`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: poem.title,
+        text: shareText,
+        url: window.location.href
+      });
+    } else {
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert("诗词内容已复制到剪贴板！");
+      });
+    }
+  }
+
+  // 收藏功能
+  function toggleFavorite() {
+    if (state.currentIndex === null) return;
+    const poem = state.filtered[state.currentIndex];
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    const index = favorites.findIndex(f => f.id === poem.id);
+    
+    if (index === -1) {
+      favorites.push(poem);
+      els.favoriteBtn.textContent = "已收藏";
+      els.favoriteBtn.classList.add("active");
+    } else {
+      favorites.splice(index, 1);
+      els.favoriteBtn.textContent = "收藏";
+      els.favoriteBtn.classList.remove("active");
+    }
+    
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }
+
+  // 关于页面功能
+  function showAboutPage() {
+    els.listView.hidden = true;
+    els.detailView.hidden = true;
+    els.aboutSection.hidden = false;
+  }
+
+  function hideAboutPage() {
+    els.aboutSection.hidden = true;
+    showList();
   }
 
   // AI聊天助手功能
