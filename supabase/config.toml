@@ -1,0 +1,20 @@
+# Supabase项目配置
+
+[project]
+# 项目名称
+name = "poem-appreciation-platform"
+# 项目描述
+description = "诗歌赏析平台 - 支持AI聊天助手"
+
+[auth]
+# 身份验证设置
+site_url = "https://your-app-name.netlify.app"
+redirect_urls = ["https://your-app-name.netlify.app"]
+
+[edge_functions]
+# Edge Functions配置
+ai_chat = "supabase/functions/ai-chat"
+
+[storage]
+# 存储配置（可选）
+enabled = true

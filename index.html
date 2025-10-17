@@ -70,6 +70,27 @@
     <small>© 2025 诗词赏析 · 本站示例数据仅用于演示</small>
   </footer>
 
+  <!-- AI聊天助手 -->
+  <div id="aiChat" class="ai-chat">
+    <button id="chatToggle" class="chat-toggle" aria-label="打开AI助手">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+        <path d="M11 14h2v-3h3V9h-3V6h-2v3H8v2h3z"/>
+      </svg>
+    </button>
+    <div class="chat-window" hidden>
+      <div class="chat-header">
+        <h3>AI诗词助手</h3>
+        <button id="chatClose" class="chat-close">×</button>
+      </div>
+      <div class="chat-messages"></div>
+      <div class="chat-input">
+        <input type="text" placeholder="请输入关于诗词的问题..." maxlength="500">
+        <button type="button">发送</button>
+      </div>
+    </div>
+  </div>
+
   <script src="assets/script.js"></script>
 </body>
 </html>

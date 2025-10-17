@@ -1,0 +1,30 @@
+{
+  "name": "poem-appreciation-platform",
+  "version": "1.0.0",
+  "description": "诗歌赏析平台 - 支持搜索、筛选和AI聊天助手",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "build": "echo 'No build process needed for static site'",
+    "serve": "npx serve ."
+  },
+  "keywords": [
+    "poetry",
+    "chinese-poetry",
+    "literature",
+    "education",
+    "static-site"
+  ],
+  "author": "诗词赏析团队",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/poem-appreciation-platform"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

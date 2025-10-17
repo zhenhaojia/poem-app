@@ -1,0 +1,23 @@
+[build]
+  publish = "."
+  command = "echo 'Static site build complete'"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[headers]
+  # 安全头设置
+  [headers."/*"]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# 环境变量（可选）
+# [build.environment]
+#   MY_VARIABLE = "my value"

@@ -247,4 +247,183 @@
     showDetail(p);
     state.currentIndex = idx;
   }
+
+  // AI聊天助手功能
+  initAIChat();
 })();
+
+function initAIChat() {
+  const chatToggle = document.getElementById('chatToggle');
+  const chatClose = document.getElementById('chatClose');
+  const chatWindow = document.querySelector('.chat-window');
+  const chatMessages = document.querySelector('.chat-messages');
+  const chatInput = document.querySelector('.chat-input input');
+  const chatSend = document.querySelector('.chat-input button');
+  let isChatOpen = false;
+  
+  // Supabase配置
+  const SUPABASE_CONFIG = {
+    aiChatFunction: 'https://pbrlkenmlyefcuyxpovi.supabase.co/functions/v1/ai-chat'
+  };
+
+  chatToggle.addEventListener('click', () => {
+    isChatOpen = !isChatOpen;
+    chatWindow.hidden = !isChatOpen;
+    if (isChatOpen) {
+      chatInput.focus();
+      addWelcomeMessage();
+    }
+  });
+
+  chatClose.addEventListener('click', () => {
+    isChatOpen = false;
+    chatWindow.hidden = true;
+  });
+
+  chatSend.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  function addWelcomeMessage() {
+    if (chatMessages.children.length === 0) {
+      addMessage('assistant', '您好！我是AI诗词助手，可以帮您：
+• 解析诗词含义
+• 查询作者背景
+• 了解创作背景
+• 提供诗词赏析
+
+请问有什么可以帮助您的吗？');
+    }
+  }
+
+  async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    addMessage('user', message);
+    chatInput.value = '';
+
+    // 显示输入中状态
+    const typingIndicator = document.createElement('div');
+    typingIndicator.className = 'message assistant typing';
+    typingIndicator.innerHTML = `
+      <div class="typing-indicator">
+        <span>AI正在思考</span>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    `;
+    chatMessages.appendChild(typingIndicator);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+      // 调用Supabase Edge Function获取AI回复
+      const response = await fetchAIResponse(message);
+      chatMessages.removeChild(typingIndicator);
+      addMessage('assistant', response);
+    } catch (error) {
+      console.error('AI请求失败:', error);
+      chatMessages.removeChild(typingIndicator);
+      // 如果API调用失败，使用本地回复
+      const fallbackResponse = generateAIResponse(message);
+      addMessage('assistant', fallbackResponse);
+    }
+  }
+
+  async function fetchAIResponse(message) {
+    try {
+      const response = await fetch(SUPABASE_CONFIG.aiChatFunction, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: message,
+          currentPoem: getCurrentPoemContext()
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.response || '抱歉，我暂时无法回答这个问题。';
+    } catch (error) {
+      console.error('调用AI服务失败:', error);
+      throw error;
+    }
+  }
+
+  function getCurrentPoemContext() {
+    // 获取当前浏览的诗词信息，为AI提供上下文
+    const currentPoem = state.poems.find(p => p.id === parseHash().id);
+    return currentPoem ? {
+      title: currentPoem.title,
+      author: currentPoem.author,
+      dynasty: currentPoem.dynasty
+    } : null;
+  }
+
+  function addMessage(sender, text) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+    messageDiv.textContent = text;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function generateAIResponse(message) {
+    const lowerMessage = message.toLowerCase();
+    
+    // 简单的关键词匹配回复
+    if (lowerMessage.includes('你好') || lowerMessage.includes('您好')) {
+      return '您好！很高兴为您提供诗词相关的帮助。';
+    }
+    
+    if (lowerMessage.includes('帮助') || lowerMessage.includes('功能')) {
+      return '我可以帮您：
+1. 解析诗词内容和意境
+2. 介绍作者生平和创作背景
+3. 提供诗词翻译和注释
+4. 推荐相关诗词作品
+5. 解答诗词相关的疑问';
+    }
+    
+    if (lowerMessage.includes('春晓') || lowerMessage.includes('孟浩然')) {
+      return '《春晓》是唐代诗人孟浩然的代表作之一。
+
+这首诗通过"春眠不觉晓"的日常场景，描绘了春天的美好。诗中"处处闻啼鸟"展现生机，"夜来风雨声"暗示变化，"花落知多少"则带有淡淡的惋惜，体现了诗人对自然变化的细腻感受。';
+    }
+    
+    if (lowerMessage.includes('登鹳雀楼') || lowerMessage.includes('王之涣')) {
+      return '《登鹳雀楼》是唐代诗人王之涣的千古名篇。
+
+前两句"白日依山尽，黄河入海流"描绘壮阔的自然景观，后两句"欲穷千里目，更上一层楼"由景入情，表达了不断进取的精神追求，成为激励后人的经典名句。';
+    }
+    
+    if (lowerMessage.includes('推荐') || lowerMessage.includes('建议')) {
+      return '根据您的兴趣，我推荐：
+• 喜欢山水田园：陶渊明《饮酒》、王维《山居秋暝》
+• 喜欢豪放风格：李白《将进酒》、苏轼《念奴娇》
+• 喜欢婉约抒情：李清照《声声慢》、李商隐《无题》
+• 喜欢边塞诗：王昌龄《出塞》、岑参《白雪歌》';
+    }
+    
+    if (lowerMessage.includes('谢谢') || lowerMessage.includes('感谢')) {
+      return '不客气！如果您还有其他关于诗词的问题，随时可以问我。';
+    }
+    
+    // 默认回复
+    return `关于"${message}"，这是一个很好的问题！
+
+虽然我目前的知识库有限，但建议您：
+1. 查看本站的诗词详情页面获取详细信息
+2. 搜索具体的诗词标题或作者名
+3. 关注诗词的创作背景和时代特征
+
+如果您有具体的诗词作品想要了解，请告诉我诗名或作者，我会尽力为您解答。`;
+  }
+}
